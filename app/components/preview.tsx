@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Preview() {
   return (
@@ -8,9 +9,12 @@ export default function Preview() {
 
       {/* Background image */}
       <div className="absolute inset-0 opacity-20">
-        <img
-          src="/lagos-map.png"
-          className="w-full h-full object-cover"
+        <Image
+          src="/lagos-map.png" // ✅ FIXED PATH
+          alt="Map of Lagos"
+          fill
+          className="object-cover"
+          priority
         />
       </div>
 
