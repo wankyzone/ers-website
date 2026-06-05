@@ -1,43 +1,14 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
+import CookieBanner from "./components/CookieBanner";
+import Analytics from "./components/Analytics"; // ✅ HERE
 
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
 });
-
-export const metadata = {
-  title: "ERS — Run errands without stress in Lagos",
-  description:
-    "Skip traffic and stress. ERS connects you with trusted runners to handle your errands instantly across Lagos.",
-
-  keywords: [
-    "errand service Lagos",
-    "delivery Lagos",
-    "runner app Nigeria",
-    "send errands Lagos",
-  ],
-
-  openGraph: {
-    title: "ERS — Run errands without stress",
-    description:
-      "Get anything done by trusted runners in Lagos.",
-    url: "https://ers.wankysoftware.com",
-    siteName: "ERS",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-      },
-    ],
-    locale: "en_NG",
-    type: "website",
-  },
-};
 
 export default function RootLayout({
   children,
@@ -48,7 +19,6 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className="bg-[#0B0D12] text-white antialiased font-sans">
 
-        {/* Structured Data (SEO) */}
         <Script
           id="ld-json"
           type="application/ld+json"
@@ -66,8 +36,8 @@ export default function RootLayout({
 
         {children}
 
-        {/* Google Analytics */}
-        <GoogleAnalytics gaId="G-XXXXXXXXXX" />
+        <CookieBanner />
+        <Analytics /> {/* ✅ THIS IS CORRECT */}
 
       </body>
     </html>
