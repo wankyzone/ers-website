@@ -18,19 +18,29 @@ export default function AdminPage() {
   const [page, setPage] = useState(1);
   const [authorized, setAuthorized] = useState(false);
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const pageSize = 10;
 
-  // 🔐 Auth
-  const handleLogin = () => {
-    if (password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
+  // 🔐 SECURE LOGIN (SERVER VALIDATION)
+  const handleLogin = async () => {
+    setLoading(true);
+
+    const res = await fetch("/api/admin-auth", {
+      method: "POST",
+      body: JSON.stringify({ password }),
+    });
+
+    setLoading(false);
+
+    if (res.ok) {
       setAuthorized(true);
     } else {
       alert("Wrong password");
     }
   };
 
-  // 📡 Fetch + Realtime
+  // 📡 FETCH + REALTIME
   useEffect(() => {
     let channel: RealtimeChannel;
 
@@ -38,24 +48,36 @@ export default function AdminPage() {
       const { data } = await supabase
         .from("waitlist")
         .select("*")
-        .order("referrals_count", { ascending: false }); // 🔥 leaderboard
+        .order("referrals_count", { ascending: false });
 
       setUsers(data || []);
 
-      // 🔥 REALTIME
+      // 🔥 REALTIME SUBSCRIPTION
       channel = supabase
         .channel("waitlist-realtime")
         .on(
           "postgres_changes",
           {
-            event: "INSERT",
+            event: "*",
             schema: "public",
             table: "waitlist",
           },
           (payload) => {
             const newUser = payload.new as WaitlistUser;
 
-            setUsers((prev) => [newUser, ...prev]);
+            setUsers((prev) => {
+              const exists = prev.find((u) => u.id === newUser.id);
+
+              if (exists) {
+                // update existing
+                return prev.map((u) =>
+                  u.id === newUser.id ? newUser : u
+                );
+              }
+
+              // insert new
+              return [newUser, ...prev];
+            });
           }
         )
         .subscribe();
@@ -68,20 +90,20 @@ export default function AdminPage() {
     };
   }, []);
 
-  // 🔍 Filter (NO setState = correct)
+  // 🔍 FILTER (NO setState — ESLINT SAFE)
   const filtered = useMemo(() => {
     return users.filter((u) =>
       u.email.toLowerCase().includes(search.toLowerCase())
     );
   }, [users, search]);
 
-  // 📄 Smart pagination (no effect needed)
+  // 📄 PAGINATION (SMART RESET)
   const currentPage = search ? 1 : page;
 
   const start = (currentPage - 1) * pageSize;
   const paginated = filtered.slice(start, start + pageSize);
 
-  // ⬇️ CSV
+  // ⬇️ CSV EXPORT
   const exportCSV = () => {
     const rows = filtered.map(
       (u) =>
@@ -99,7 +121,7 @@ export default function AdminPage() {
     a.click();
   };
 
-  // 🔐 Login UI
+  // 🔐 LOGIN SCREEN
   if (!authorized) {
     return (
       <div className="h-screen flex items-center justify-center bg-black text-white">
@@ -116,19 +138,20 @@ export default function AdminPage() {
 
           <button
             onClick={handleLogin}
-            className="w-full bg-[#1ED760] text-black py-2 rounded"
+            disabled={loading}
+            className="w-full bg-[#1ED760] text-black py-2 rounded disabled:opacity-50"
           >
-            Login
+            {loading ? "Checking..." : "Login"}
           </button>
         </div>
       </div>
     );
   }
 
+  // ✅ DASHBOARD
   return (
     <div className="p-10 max-w-6xl mx-auto text-white">
 
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">
           Waitlist Growth Dashboard 🚀
@@ -142,7 +165,7 @@ export default function AdminPage() {
         </button>
       </div>
 
-      {/* Search */}
+      {/* SEARCH */}
       <input
         type="text"
         placeholder="Search email..."
@@ -151,12 +174,12 @@ export default function AdminPage() {
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      {/* Stats */}
+      {/* STATS */}
       <p className="text-sm text-gray-400 mb-4">
         Total Users: {filtered.length}
       </p>
 
-      {/* Table */}
+      {/* TABLE */}
       <div className="bg-[#111217] border border-white/10 rounded-xl p-4">
         <table className="w-full text-sm">
           <thead className="text-gray-400 border-b border-white/10">
@@ -187,7 +210,7 @@ export default function AdminPage() {
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* PAGINATION */}
       <div className="flex justify-center mt-6 gap-2">
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -211,7 +234,6 @@ export default function AdminPage() {
           Next
         </button>
       </div>
-
     </div>
   );
 }
