@@ -1,16 +1,36 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+function generateCode() {
+  return Math.random().toString(36).substring(2, 8);
+}
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const { email } = body;
+  const { email, referralCode } = await req.json();
 
-  if (!email) {
-    return NextResponse.json({ error: "Email required" }, { status: 400 });
+  const code = generateCode();
+
+  const { data, error } = await supabase
+    .from("waitlist")
+    .insert({
+      email,
+      referral_code: code,
+      referred_by: referralCode || null,
+    })
+    .select()
+    .single();
+
+  // 🔥 increment referrer
+  if (referralCode) {
+    await supabase.rpc("increment_referrals", {
+      code_input: referralCode,
+    });
   }
 
-  console.log("New waitlist:", email);
-
-  return NextResponse.json({
-    success: true,
-  });
+  return NextResponse.json({ data, error });
 }
