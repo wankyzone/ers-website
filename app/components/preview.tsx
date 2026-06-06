@@ -18,14 +18,43 @@ export default function Preview() {
     "Delivered",
   ];
 
-  // Simulate movement
   useEffect(() => {
-    const interval = setInterval(() => {
-      setDistance((d) => Math.max(0, +(d - 0.2).toFixed(1)));
-      setEta((t) => Math.max(1, t - 1));
-      setProgress((p) => Math.min(100, p + 10));
-      setStep((s) => Math.min(steps.length - 1, s + 1));
-    }, 2000);
+    let interval: NodeJS.Timeout;
+
+    const startSimulation = () => {
+      interval = setInterval(() => {
+        setDistance((d) => {
+          if (d <= 0) return 0;
+          return +(d - 0.2).toFixed(1);
+        });
+
+        setEta((t) => Math.max(1, t - 1));
+
+        setProgress((p) => {
+          const next = Math.min(100, p + 12);
+          return next;
+        });
+
+        setStep((s) => {
+          if (s >= steps.length - 1) {
+            clearInterval(interval);
+
+            // reset after short pause
+            setTimeout(() => {
+              setDistance(2.3);
+              setEta(12);
+              setProgress(40);
+              setStep(0);
+            }, 2500);
+
+            return s;
+          }
+          return s + 1;
+        });
+      }, 2000);
+    };
+
+    startSimulation();
 
     return () => clearInterval(interval);
   }, []);
@@ -39,6 +68,7 @@ export default function Preview() {
       <motion.div
         initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
         className="max-w-6xl mx-auto text-center relative z-10"
       >
 
@@ -59,24 +89,15 @@ export default function Preview() {
           {/* LEFT */}
           <div className="space-y-4 text-left">
 
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              className="bg-[#111217] border border-white/10 p-4 rounded-xl"
-            >
+            <div className="bg-[#111217] border border-white/10 p-4 rounded-xl">
               <p className="text-green-400 text-sm">✓ Runner Assigned</p>
               <p className="text-white font-medium mt-1">Emeka O.</p>
               <p className="text-gray-400 text-sm flex items-center gap-1">
                 <Star size={14} /> 4.9 · 312 runs
               </p>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-[#111217] border border-white/10 p-4 rounded-xl"
-            >
+            <div className="bg-[#111217] border border-white/10 p-4 rounded-xl">
               <p className="text-gray-400 text-sm flex items-center gap-2">
                 <Clock size={14} /> Estimated arrival
               </p>
@@ -91,17 +112,12 @@ export default function Preview() {
                   style={{ width: `${progress}%` }}
                 />
               </div>
-            </motion.div>
+            </div>
 
           </div>
 
           {/* CENTER */}
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="bg-[#111217] border border-white/10 rounded-2xl p-6 text-left relative hover:scale-[1.02] transition-all duration-300 shadow-[0_0_60px_rgba(30,215,96,0.15)]"
-          >
+          <div className="bg-[#111217] border border-white/10 rounded-2xl p-6 text-left relative shadow-[0_0_60px_rgba(30,215,96,0.15)]">
 
             <div className="flex justify-between items-center">
               <p className="text-white font-semibold">Track Errand</p>
@@ -118,16 +134,10 @@ export default function Preview() {
 
             {/* Map */}
             <div className="mt-4 h-40 bg-black/30 rounded-lg relative overflow-hidden">
-              <div className="absolute inset-0 grid grid-cols-4 gap-2 p-4 opacity-20">
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <div key={i} className="bg-white/10 rounded"></div>
-                ))}
-              </div>
-
               <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-                className="absolute top-12 left-8 w-28 h-28 border border-dashed border-green-400 rounded-full opacity-60"
+                animate={{ x: [0, 40, 80, 120] }}
+                transition={{ duration: 4, repeat: Infinity }}
+                className="absolute top-16 left-6 w-4 h-4 bg-[#1ED760] rounded-full"
               />
             </div>
 
@@ -157,7 +167,7 @@ export default function Preview() {
 
             </div>
 
-          </motion.div>
+          </div>
 
           {/* RIGHT */}
           <div className="space-y-4 text-left">
@@ -193,11 +203,27 @@ export default function Preview() {
                   </li>
                 ))}
               </ul>
-
             </div>
 
           </div>
 
+        </div>
+
+        {/* CTA (NEW — critical) */}
+        <div className="mt-20">
+          <a
+            href="#hero"
+            className="
+              inline-block
+              bg-[#1ED760] text-black
+              px-8 py-4 rounded-md
+              font-semibold
+              hover:bg-[#17c253]
+              transition
+            "
+          >
+            Try it now
+          </a>
         </div>
 
       </motion.div>

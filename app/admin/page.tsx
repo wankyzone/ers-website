@@ -15,69 +15,75 @@ type WaitlistUser = {
 export default function AdminPage() {
   const [users, setUsers] = useState<WaitlistUser[]>([]);
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
   const [authorized, setAuthorized] = useState(false);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const pageSize = 10;
-
-  // 🔐 SECURE LOGIN (SERVER VALIDATION)
+  // 🔐 LOGIN
   const handleLogin = async () => {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const res = await fetch("/api/admin-auth", {
-      method: "POST",
-      body: JSON.stringify({ password }),
-    });
+      const res = await fetch("/api/admin-auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
 
-    setLoading(false);
+      if (!res.ok) throw new Error();
 
-    if (res.ok) {
       setAuthorized(true);
-    } else {
+    } catch {
       alert("Wrong password");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  // 🔓 LOGOUT
+  const handleLogout = async () => {
+    await fetch("/api/admin-logout", { method: "POST" });
+    window.location.reload();
   };
 
   // 📡 FETCH + REALTIME
   useEffect(() => {
-    let channel: RealtimeChannel;
+    if (!authorized) return;
+
+    let channel: RealtimeChannel | null = null;
 
     const init = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("waitlist")
         .select("*")
-        .order("referrals_count", { ascending: false });
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        return;
+      }
 
       setUsers(data || []);
 
-      // 🔥 REALTIME SUBSCRIPTION
+      // ✅ Properly typed channel
       channel = supabase
-        .channel("waitlist-realtime")
+        .channel("admin-live")
         .on(
           "postgres_changes",
           {
-            event: "*",
+            event: "INSERT",
             schema: "public",
             table: "waitlist",
           },
           (payload) => {
             const newUser = payload.new as WaitlistUser;
 
-            setUsers((prev) => {
-              const exists = prev.find((u) => u.id === newUser.id);
+            // 🔔 ALERT
+            alert(`🚀 New signup: ${newUser.email}`);
 
-              if (exists) {
-                // update existing
-                return prev.map((u) =>
-                  u.id === newUser.id ? newUser : u
-                );
-              }
-
-              // insert new
-              return [newUser, ...prev];
-            });
+            setUsers((prev) => [newUser, ...prev]);
           }
         )
         .subscribe();
@@ -86,39 +92,50 @@ export default function AdminPage() {
     init();
 
     return () => {
-      if (channel) supabase.removeChannel(channel);
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
-  }, []);
+  }, [authorized]);
 
-  // 🔍 FILTER (NO setState — ESLINT SAFE)
+  // 🔍 FILTER
   const filtered = useMemo(() => {
     return users.filter((u) =>
       u.email.toLowerCase().includes(search.toLowerCase())
     );
   }, [users, search]);
 
-  // 📄 PAGINATION (SMART RESET)
-  const currentPage = search ? 1 : page;
+  // 📊 ANALYTICS
+  const totalUsers = users.length;
 
-  const start = (currentPage - 1) * pageSize;
-  const paginated = filtered.slice(start, start + pageSize);
+  const totalReferrals = users.reduce(
+    (acc, u) => acc + (u.referrals_count || 0),
+    0
+  );
 
-  // ⬇️ CSV EXPORT
-  const exportCSV = () => {
-    const rows = filtered.map(
-      (u) =>
-        `${u.email},${u.referrals_count || 0},${u.created_at}`
-    );
+  const topReferrer =
+    users.length > 0
+      ? users.reduce((prev, current) =>
+          (current.referrals_count || 0) >
+          (prev.referrals_count || 0)
+            ? current
+            : prev
+        )
+      : null;
 
-    const csv = ["Email,Referrals,Joined", ...rows].join("\n");
+  // 🧨 DELETE USER
+  const deleteUser = async (id: string) => {
+    const confirmDelete = confirm("Delete this user?");
+    if (!confirmDelete) return;
 
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
+    const { error } = await supabase
+      .from("waitlist")
+      .delete()
+      .eq("id", id);
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "waitlist.csv";
-    a.click();
+    if (!error) {
+      setUsers((prev) => prev.filter((u) => u.id !== id));
+    }
   };
 
   // 🔐 LOGIN SCREEN
@@ -139,7 +156,7 @@ export default function AdminPage() {
           <button
             onClick={handleLogin}
             disabled={loading}
-            className="w-full bg-[#1ED760] text-black py-2 rounded disabled:opacity-50"
+            className="w-full bg-[#1ED760] text-black py-2 rounded"
           >
             {loading ? "Checking..." : "Login"}
           </button>
@@ -152,51 +169,67 @@ export default function AdminPage() {
   return (
     <div className="p-10 max-w-6xl mx-auto text-white">
 
-      <div className="flex justify-between items-center mb-6">
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">
-          Waitlist Growth Dashboard 🚀
+          ERS Admin Control Panel ⚡
         </h1>
 
         <button
-          onClick={exportCSV}
-          className="px-4 py-2 bg-[#1ED760] text-black rounded"
+          onClick={handleLogout}
+          className="px-4 py-2 border border-white/10 rounded"
         >
-          Export CSV
+          Logout
         </button>
+      </div>
+
+      {/* ANALYTICS */}
+      <div className="grid md:grid-cols-3 gap-6 mb-10">
+        <div className="bg-[#111217] p-6 rounded-xl border border-white/10">
+          <p className="text-gray-400 text-sm">Total Users</p>
+          <p className="text-2xl font-bold text-[#1ED760] mt-2">
+            {totalUsers}
+          </p>
+        </div>
+
+        <div className="bg-[#111217] p-6 rounded-xl border border-white/10">
+          <p className="text-gray-400 text-sm">Total Referrals</p>
+          <p className="text-2xl font-bold text-[#1ED760] mt-2">
+            {totalReferrals}
+          </p>
+        </div>
+
+        <div className="bg-[#111217] p-6 rounded-xl border border-white/10">
+          <p className="text-gray-400 text-sm">Top Referrer</p>
+          <p className="text-sm mt-2">
+            {topReferrer?.email || "—"}
+          </p>
+        </div>
       </div>
 
       {/* SEARCH */}
       <input
-        type="text"
         placeholder="Search email..."
         className="mb-6 px-4 py-2 bg-[#111217] border border-white/10 rounded w-full"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      {/* STATS */}
-      <p className="text-sm text-gray-400 mb-4">
-        Total Users: {filtered.length}
-      </p>
-
       {/* TABLE */}
       <div className="bg-[#111217] border border-white/10 rounded-xl p-4">
         <table className="w-full text-sm">
           <thead className="text-gray-400 border-b border-white/10">
             <tr>
-              <th className="text-left py-2">Rank</th>
               <th className="text-left py-2">Email</th>
               <th className="text-left py-2">Referrals</th>
               <th className="text-left py-2">Joined</th>
+              <th className="text-left py-2">Action</th>
             </tr>
           </thead>
 
           <tbody>
-            {paginated.map((u, i) => (
+            {filtered.map((u) => (
               <tr key={u.id} className="border-b border-white/5">
-                <td className="py-2 font-semibold text-[#1ED760]">
-                  #{start + i + 1}
-                </td>
                 <td className="py-2">{u.email}</td>
                 <td className="py-2">
                   {u.referrals_count || 0}
@@ -204,36 +237,21 @@ export default function AdminPage() {
                 <td className="py-2">
                   {new Date(u.created_at).toLocaleString()}
                 </td>
+
+                <td className="py-2">
+                  <button
+                    onClick={() => deleteUser(u.id)}
+                    className="text-red-400 hover:underline"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* PAGINATION */}
-      <div className="flex justify-center mt-6 gap-2">
-        <button
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-          className="px-3 py-1 border border-white/10 rounded"
-        >
-          Prev
-        </button>
-
-        <span className="px-3 py-1 text-sm">
-          Page {currentPage}
-        </span>
-
-        <button
-          onClick={() =>
-            setPage((p) =>
-              p * pageSize < filtered.length ? p + 1 : p
-            )
-          }
-          className="px-3 py-1 border border-white/10 rounded"
-        >
-          Next
-        </button>
-      </div>
     </div>
   );
 }

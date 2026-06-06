@@ -5,16 +5,15 @@ import { useState } from "react";
 import Navbar from "./components/navbar";
 import Hero from "./components/hero";
 import Categories from "./components/categories";
-import Problem from "./components/problem";
-import Solution from "./components/solution";
 import HowItWorks from "./components/how-it-works";
+import Solution from "./components/solution"; // "Why ERS"
 import Trust from "./components/trust";
+import Testimonials from "./components/testimonials"; // ✅ ADD THIS
 import CTA from "./components/cta";
 import Footer from "./components/footer";
 
 /**
- * `task` state is intentionally co-located here because only Hero + Categories
- * share it. If the app grows, promote this to a React context or Zustand store.
+ * Task state shared between Hero + Categories
  */
 export default function Page() {
   const [task, setTask] = useState("");
@@ -23,15 +22,27 @@ export default function Page() {
     <main className="bg-[#0B0D12] text-white overflow-x-hidden">
       <Navbar />
 
-      {/* Task state scoped to the "find a runner" flow */}
+      {/* PRIMARY CONVERSION ENTRY */}
       <Hero task={task} setTask={setTask} />
+
+      {/* CLARITY */}
+      <HowItWorks />
+
+      {/* USE CASES */}
       <Categories setTask={setTask} />
 
-      <Problem />
+      {/* DIFFERENTIATION */}
       <Solution />
-      <HowItWorks />
+
+      {/* TRUST */}
       <Trust />
+
+      {/* 🔥 SOCIAL PROOF (CRITICAL ADDITION) */}
+      <Testimonials />
+
+      {/* FINAL CONVERSION PUSH */}
       <CTA />
+
       <Footer />
     </main>
   );

@@ -1,150 +1,159 @@
+"use client";
+
 export default function PrivacyPolicy() {
   return (
-    <main className="max-w-4xl mx-auto px-6 py-16 text-gray-800">
-      
-      {/* Header */}
-      <div className="mb-10">
-        <h1 className="text-4xl font-bold mb-2">Privacy Policy</h1>
-        <p className="text-sm text-gray-500">
-          Last updated: 5 June 2026
+    <main className="bg-[#0B0D12] text-white">
+      <div className="max-w-4xl mx-auto px-6 py-16 text-white/80">
+
+        {/* Header */}
+        <div className="mb-10">
+          <h1 className="text-4xl font-bold mb-2 text-white">
+            Privacy Policy
+          </h1>
+          <p className="text-sm text-white/40">
+            Last updated: 5 June 2026
+          </p>
+        </div>
+
+        {/* Intro */}
+        <p className="mb-6 leading-relaxed">
+          ERS (Errand Runners System) respects your privacy and is committed to
+          protecting your personal information. This Privacy Policy explains how
+          we collect, use, and safeguard your data when you use our platform.
         </p>
+
+        {/* 1 */}
+        <section className="mb-10">
+          <h2 className="text-2xl font-semibold mb-4 text-white">
+            1. Information We Collect
+          </h2>
+
+          <h3 className="font-semibold mt-4 mb-2 text-white">
+            Personal Information
+          </h3>
+          <ul className="list-disc ml-6 space-y-1">
+            <li>Name, email, phone number</li>
+            <li>Account and profile data</li>
+          </ul>
+
+          <h3 className="font-semibold mt-4 mb-2 text-white">
+            Location Data
+          </h3>
+          <ul className="list-disc ml-6 space-y-1">
+            <li>Real-time GPS location</li>
+            <li>Route tracking</li>
+          </ul>
+
+          <h3 className="font-semibold mt-4 mb-2 text-white">
+            Transaction Data
+          </h3>
+          <ul className="list-disc ml-6 space-y-1">
+            <li>Errand details</li>
+            <li>Payment records</li>
+          </ul>
+
+          <h3 className="font-semibold mt-4 mb-2 text-white">
+            Device Data
+          </h3>
+          <ul className="list-disc ml-6 space-y-1">
+            <li>IP address</li>
+            <li>Device type</li>
+            <li>Usage logs</li>
+          </ul>
+        </section>
+
+        {/* 2 */}
+        <section className="mb-10">
+          <h2 className="text-2xl font-semibold mb-4 text-white">
+            2. How We Use Data
+          </h2>
+          <ul className="list-disc ml-6 space-y-2">
+            <li>Match clients with runners</li>
+            <li>Process errands and payments</li>
+            <li>Improve platform performance</li>
+            <li>Detect fraud and abuse</li>
+            <li>Send updates and notifications</li>
+          </ul>
+        </section>
+
+        {/* 3 */}
+        <section className="mb-10">
+          <h2 className="text-2xl font-semibold mb-4 text-white">
+            3. Data Sharing
+          </h2>
+          <ul className="list-disc ml-6 space-y-2">
+            <li>Payment providers (e.g., Paystack)</li>
+            <li>Hosting and infrastructure services</li>
+            <li>Law enforcement when required</li>
+          </ul>
+          <p className="mt-3 text-white">
+            We do not sell your personal data.
+          </p>
+        </section>
+
+        {/* 4 */}
+        <section className="mb-10">
+          <h2 className="text-2xl font-semibold mb-4 text-white">
+            4. Data Security
+          </h2>
+          <ul className="list-disc ml-6 space-y-2">
+            <li>Encrypted connections (HTTPS)</li>
+            <li>Secure authentication systems</li>
+            <li>Access control and monitoring</li>
+          </ul>
+        </section>
+
+        {/* 5 */}
+        <section className="mb-10">
+          <h2 className="text-2xl font-semibold mb-4 text-white">
+            5. Your Rights
+          </h2>
+          <ul className="list-disc ml-6 space-y-2">
+            <li>Access your data</li>
+            <li>Request updates or corrections</li>
+            <li>Request deletion</li>
+            <li>Opt out of communications</li>
+          </ul>
+        </section>
+
+        {/* 6 */}
+        <section className="mb-10">
+          <h2 className="text-2xl font-semibold mb-4 text-white">
+            6. Data Retention
+          </h2>
+          <p>
+            We retain data only as long as necessary for service delivery,
+            legal compliance, and fraud prevention.
+          </p>
+        </section>
+
+        {/* 7 */}
+        <section className="mb-10">
+          <h2 className="text-2xl font-semibold mb-4 text-white">
+            7. Updates
+          </h2>
+          <p>
+            This policy may be updated periodically. Continued use of ERS
+            means you accept the updated policy.
+          </p>
+        </section>
+
+        {/* Contact */}
+        <section>
+          <h2 className="text-2xl font-semibold mb-4 text-white">
+            Contact
+          </h2>
+          <p>
+            <a
+              href="mailto:support@ers.com"
+              className="text-[#1ED760] underline"
+            >
+              support@ers.com
+            </a>
+          </p>
+        </section>
+
       </div>
-
-      {/* Intro */}
-      <p className="mb-6 leading-relaxed">
-        Welcome to ERS (Errand Runners System). Your privacy is critical to us.
-        This Privacy Policy explains how we collect, use, and protect your
-        information when you use our platform.
-      </p>
-
-      {/* Section 1 */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold mb-4">
-          1. Information We Collect
-        </h2>
-
-        <h3 className="font-semibold mt-4 mb-2">a. Personal Information</h3>
-        <ul className="list-disc ml-6 space-y-1">
-          <li>Name</li>
-          <li>Email address</li>
-          <li>Phone number</li>
-          <li>Profile details</li>
-        </ul>
-
-        <h3 className="font-semibold mt-4 mb-2">b. Location Data</h3>
-        <ul className="list-disc ml-6 space-y-1">
-          <li>Real-time GPS location</li>
-          <li>Delivery route tracking</li>
-        </ul>
-
-        <h3 className="font-semibold mt-4 mb-2">c. Transaction Data</h3>
-        <ul className="list-disc ml-6 space-y-1">
-          <li>Errand details</li>
-          <li>Payment records</li>
-          <li>Wallet and payout information</li>
-        </ul>
-
-        <h3 className="font-semibold mt-4 mb-2">d. Device & Usage Data</h3>
-        <ul className="list-disc ml-6 space-y-1">
-          <li>IP address</li>
-          <li>Device type</li>
-          <li>App interactions and logs</li>
-        </ul>
-      </section>
-
-      {/* Section 2 */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold mb-4">
-          2. How We Use Your Information
-        </h2>
-        <ul className="list-disc ml-6 space-y-1">
-          <li>Match clients with runners</li>
-          <li>Facilitate errands and deliveries</li>
-          <li>Process payments and payouts</li>
-          <li>Improve platform performance</li>
-          <li>Detect fraud and abuse</li>
-          <li>Send notifications and updates</li>
-        </ul>
-      </section>
-
-      {/* Section 3 */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold mb-4">
-          3. Data Sharing
-        </h2>
-        <ul className="list-disc ml-6 space-y-1">
-          <li>Payment processors (e.g., Paystack)</li>
-          <li>Service providers (hosting, analytics)</li>
-          <li>Law enforcement when required by law</li>
-        </ul>
-        <p className="mt-3 font-medium">
-          We do not sell your personal data.
-        </p>
-      </section>
-
-      {/* Section 4 */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold mb-4">
-          4. Data Security
-        </h2>
-        <ul className="list-disc ml-6 space-y-1">
-          <li>Encrypted connections (HTTPS)</li>
-          <li>Secure authentication (JWT)</li>
-          <li>Role-based access controls</li>
-        </ul>
-      </section>
-
-      {/* Section 5 */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold mb-4">
-          5. Your Rights
-        </h2>
-        <ul className="list-disc ml-6 space-y-1">
-          <li>Access your data</li>
-          <li>Request deletion</li>
-          <li>Update your information</li>
-          <li>Opt out of marketing communications</li>
-        </ul>
-      </section>
-
-      {/* Section 6 */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold mb-4">
-          6. Data Retention
-        </h2>
-        <p>
-          We retain data only as long as necessary for service delivery,
-          legal compliance, and fraud prevention.
-        </p>
-      </section>
-
-      {/* Section 7 */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold mb-4">
-          7. Updates to This Policy
-        </h2>
-        <p>
-          We may update this policy periodically. Changes will be communicated
-          via the app or email.
-        </p>
-      </section>
-
-      {/* Section 8 */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">
-          8. Contact
-        </h2>
-        <p>
-          For questions, contact:{" "}
-          <a
-            href="mailto:support@ers.com"
-            className="text-blue-600 underline"
-          >
-            support@ers.com
-          </a>
-        </p>
-      </section>
-
     </main>
   );
 }

@@ -10,12 +10,42 @@ import {
 } from "lucide-react";
 
 const categories = [
-  { title: "Groceries", icon: ShoppingCart, color: "text-green-400 bg-green-500/10" },
-  { title: "Deliveries", icon: Package, color: "text-blue-400 bg-blue-500/10" },
-  { title: "Pharmacy", icon: Pill, color: "text-yellow-400 bg-yellow-500/10" },
-  { title: "Packages", icon: Box, color: "text-purple-400 bg-purple-500/10" },
-  { title: "Quick Tasks", icon: Zap, color: "text-orange-400 bg-orange-500/10" },
-  { title: "Food & Drinks", icon: Coffee, color: "text-pink-400 bg-pink-500/10" },
+  {
+    title: "Groceries",
+    task: "Buy groceries from the nearest store",
+    icon: ShoppingCart,
+    color: "text-green-400 bg-green-500/10",
+  },
+  {
+    title: "Deliveries",
+    task: "Deliver a package across town",
+    icon: Package,
+    color: "text-blue-400 bg-blue-500/10",
+  },
+  {
+    title: "Pharmacy",
+    task: "Pick up medication from a pharmacy",
+    icon: Pill,
+    color: "text-yellow-400 bg-yellow-500/10",
+  },
+  {
+    title: "Packages",
+    task: "Send a package to a location",
+    icon: Box,
+    color: "text-purple-400 bg-purple-500/10",
+  },
+  {
+    title: "Quick Tasks",
+    task: "Run a quick errand nearby",
+    icon: Zap,
+    color: "text-orange-400 bg-orange-500/10",
+  },
+  {
+    title: "Food & Drinks",
+    task: "Pick up food or drinks",
+    icon: Coffee,
+    color: "text-pink-400 bg-pink-500/10",
+  },
 ];
 
 export default function Categories({
@@ -28,9 +58,14 @@ export default function Categories({
       <div className="max-w-6xl mx-auto text-center">
 
         {/* Label */}
-        <p className="text-xs tracking-widest text-gray-500 mb-10">
+        <p className="text-xs tracking-widest text-white/40 mb-4">
           WHAT CAN WE DO FOR YOU?
         </p>
+
+        {/* Headline (NEW) */}
+        <h2 className="text-3xl sm:text-4xl font-display font-bold mb-12">
+          Popular errands people run with ERS
+        </h2>
 
         {/* Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
@@ -42,7 +77,7 @@ export default function Categories({
               <div
                 key={i}
                 onClick={() => {
-                  setTask(cat.title);
+                  setTask(cat.task); // ✅ USE REAL TASK
 
                   const el = document.getElementById("hero");
                   if (el) {
@@ -79,8 +114,13 @@ export default function Categories({
                 </div>
 
                 {/* Title */}
-                <p className="text-sm text-white font-medium">
+                <p className="text-sm text-white font-medium mb-1">
                   {cat.title}
+                </p>
+
+                {/* Subtext (NEW — subtle but powerful) */}
+                <p className="text-xs text-white/40 text-center leading-tight">
+                  {cat.task}
                 </p>
 
               </div>

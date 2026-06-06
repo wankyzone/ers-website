@@ -5,6 +5,13 @@ import { Loader2, ArrowRight, CheckCircle2 } from "lucide-react";
 
 type SubmitStatus = "idle" | "loading" | "success" | "error";
 
+const suggestions = [
+  "Buy groceries from Shoprite",
+  "Deliver a package to Lekki",
+  "Pick up food from KFC",
+  "Get medication from a pharmacy",
+];
+
 export default function Hero({
   task,
   setTask,
@@ -40,15 +47,16 @@ export default function Hero({
         throw new Error(body?.message ?? `Server error (${res.status})`);
       }
 
+      // Success
       setStatus("success");
       setTask("");
-      setTimeout(() => setStatus("idle"), 5000);
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Something went wrong. Try again.";
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Try again.";
       setErrorMsg(message);
       setStatus("error");
-      setTimeout(() => setStatus("idle"), 5000);
     }
   }, [task, status, setTask]);
 
@@ -70,19 +78,19 @@ export default function Hero({
       aria-label="Find a runner"
     >
       <div className="max-w-2xl mx-auto text-center">
-        {/* Primary headline — emotional, specific */}
+        {/* Headline */}
         <h1 className="font-display text-5xl sm:text-6xl md:text-[72px] font-bold leading-[1.05] tracking-tight mb-6">
           Stop losing hours to{" "}
           <span className="text-[#1ED760]">errand running.</span>
         </h1>
 
-        {/* Trust + specificity sub-headline */}
+        {/* Subheadline */}
         <p className="text-lg sm:text-xl text-white/60 leading-relaxed font-light mb-12 max-w-xl mx-auto">
           Verified runners across Lagos. Real-time tracking. Delivered in minutes, not hours. Join 2,400+ happy users.
         </p>
 
-        {/* Input + CTA container */}
-        <div className="mb-8">
+        {/* Input */}
+        <div className="mb-6">
           <div
             className={`
               relative flex flex-col sm:flex-row items-stretch sm:items-center gap-3
@@ -112,24 +120,21 @@ export default function Hero({
                 flex-1 bg-transparent px-5 py-4 text-white text-base
                 placeholder:text-white/30
                 outline-none disabled:opacity-50
-                transition-opacity duration-200
               "
             />
 
             <button
               onClick={handleSubmit}
               disabled={isLoading || isSuccess || !task.trim()}
-              aria-label="Get a runner matched to your task"
               className="
                 flex items-center justify-center gap-2 shrink-0
                 bg-[#1ED760] text-black
                 px-8 py-4 m-1 rounded-md
                 text-base font-bold tracking-wide
-                hover:bg-[#17c253] active:scale-[0.99]
-                disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100
+                hover:bg-[#17c253]
+                active:scale-[0.99]
+                disabled:opacity-40 disabled:cursor-not-allowed
                 transition-all duration-150
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1ED760]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0D12]
-                sm:flex-shrink-0
               "
             >
               {isLoading ? (
@@ -151,15 +156,41 @@ export default function Hero({
             </button>
           </div>
 
-          {/* Inline feedback */}
+          {/* Suggestions */}
+          <div className="flex flex-wrap gap-2 mt-4 justify-center">
+            {suggestions.map((s, i) => (
+              <button
+                key={i}
+                onClick={() => setTask(s)}
+                className="
+                  text-xs px-3 py-1
+                  bg-white/5 border border-white/10
+                  rounded-full
+                  hover:bg-white/10
+                  transition
+                "
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+
+          {/* Error */}
           {status === "error" && (
-            <p
-              id="hero-error"
-              className="text-red-400 text-sm mt-3 font-medium"
-            >
-              {errorMsg}
-            </p>
+            <div className="mt-3 flex flex-col items-center gap-2">
+              <p id="hero-error" className="text-red-400 text-sm font-medium">
+                {errorMsg}
+              </p>
+              <button
+                onClick={handleSubmit}
+                className="text-xs underline text-white/60 hover:text-white"
+              >
+                Try again
+              </button>
+            </div>
           )}
+
+          {/* Success */}
           {isSuccess && (
             <p className="text-[#1ED760] text-sm mt-3 font-medium">
               ✓ Got it. A runner will reach out within 5 minutes.
@@ -167,12 +198,12 @@ export default function Hero({
           )}
         </div>
 
-        {/* Micro-copy: urgency + specificity + reduces friction */}
+        {/* Micro-copy */}
         <p className="text-sm text-white/40 mb-12">
           No upfront cost. See available runners in 30 seconds.
         </p>
 
-        {/* Trust indicators — specific, credible */}
+        {/* Trust */}
         <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/5">
           <div>
             <div className="text-2xl font-bold font-display text-white mb-1">

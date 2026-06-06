@@ -5,24 +5,24 @@ import { Zap, ShieldCheck, MapPin } from "lucide-react";
 
 const features = [
   {
-    title: "Instant task posting",
-    desc: "Describe your errand in seconds. Our smart system matches you with the nearest available runner within minutes — no phone calls, no hassle.",
-    highlight: "< 2 min to post & match",
+    title: "Post an errand in seconds",
+    desc: "Tell us what you need done and get matched instantly. No calls, no waiting, no back and forth.",
+    highlight: "< 2 min to match a runner",
     icon: Zap,
     color: "text-[#1ED760]",
     border: "from-[#1ED760]",
   },
   {
-    title: "Verified runners",
-    desc: "Every runner goes through background checks, ID verification, and community ratings. You always know who's handling your errands.",
-    highlight: "100% background checked",
+    title: "Trusted, verified runners",
+    desc: "Every runner is vetted, rated, and accountable. You always know who’s handling your task.",
+    highlight: "100% verified & rated",
     icon: ShieldCheck,
     color: "text-blue-400",
     border: "from-blue-400",
   },
   {
-    title: "Real-time tracking",
-    desc: "Follow your runner live on a map. Get instant updates at every step — from pickup to delivery. No more guessing or waiting in the dark.",
+    title: "Track everything live",
+    desc: "See exactly where your errand is at every moment. Full transparency from pickup to delivery.",
     highlight: "Live GPS tracking",
     icon: MapPin,
     color: "text-yellow-400",
@@ -41,17 +41,18 @@ export default function Solution() {
 
         {/* Label */}
         <p className="text-xs tracking-widest text-[#1ED760] mb-4">
-          THE SOLUTION
+          WHY ERS
         </p>
 
         {/* Heading */}
         <h2 className="text-4xl md:text-6xl font-bold tracking-tight">
-          ERS does it <span className="text-[#1ED760]">differently</span>
+          A faster way to get things{" "}
+          <span className="text-[#1ED760]">done</span>
         </h2>
 
         {/* Subtext */}
-        <p className="text-gray-400 mt-6 max-w-2xl mx-auto">
-          A smarter, faster, and more reliable way to get things done in Lagos.
+        <p className="text-white/60 mt-6 max-w-2xl mx-auto">
+          Built for speed, trust, and real-world reliability in Lagos.
         </p>
 
         {/* Cards */}
@@ -63,35 +64,49 @@ export default function Solution() {
             return (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.15 }}
-                className="relative bg-[#111217] border border-white/10 rounded-2xl p-6 text-left 
-                hover:-translate-y-2 hover:border-white/20 transition-all duration-300"
+                initial={{ opacity: 0, y: 60, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: i * 0.2, duration: 0.5 }}
+                viewport={{ once: true }}
+                className="
+                  relative bg-[#111217]
+                  border border-white/10
+                  rounded-2xl p-6 text-left
+                  hover:-translate-y-2
+                  hover:border-white/20
+                  hover:shadow-[0_0_40px_rgba(30,215,96,0.08)]
+                  transition-all duration-300
+                "
               >
 
-                {/* TOP ACCENT LINE */}
+                {/* Accent line */}
                 <div className={`absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r ${f.border} to-transparent`} />
 
-                {/* ICON */}
-                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4">
+                {/* Icon */}
+                <div className="
+                  w-12 h-12 rounded-xl
+                  bg-white/5
+                  flex items-center justify-center
+                  mb-4
+                  group-hover:scale-110 transition
+                ">
                   <Icon className={`w-6 h-6 ${f.color}`} />
                 </div>
 
-                {/* TITLE */}
+                {/* Title */}
                 <h3 className="text-base font-semibold text-white">
                   {f.title}
                 </h3>
 
-                {/* DESC */}
-                <p className="text-sm text-gray-400 mt-3 leading-relaxed">
+                {/* Description */}
+                <p className="text-sm text-white/60 mt-3 leading-relaxed">
                   {f.desc}
                 </p>
 
-                {/* DIVIDER */}
+                {/* Divider */}
                 <div className="h-px w-full bg-white/5 my-5" />
 
-                {/* HIGHLIGHT METRIC */}
+                {/* Highlight */}
                 <p className={`text-sm font-semibold ${f.color}`}>
                   {f.highlight}
                 </p>
@@ -100,6 +115,23 @@ export default function Solution() {
             );
           })}
 
+        </div>
+
+        {/* CTA (CRITICAL ADD) */}
+        <div className="mt-20">
+          <a
+            href="#hero"
+            className="
+              inline-block
+              bg-[#1ED760] text-black
+              px-8 py-4 rounded-md
+              font-semibold
+              hover:bg-[#17c253]
+              transition
+            "
+          >
+            Post your first errand
+          </a>
         </div>
 
       </div>

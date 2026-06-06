@@ -5,7 +5,6 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="border-t border-white/10 pt-16 pb-10 px-6 bg-[#0B0D12]">
-
       <div className="max-w-6xl mx-auto">
 
         {/* TOP GRID */}
@@ -22,7 +21,7 @@ export default function Footer() {
               real-time tracking, and secure payments.
             </p>
 
-            {/* SOCIALS */}
+            {/* SOCIALS (placeholder for now) */}
             <div className="flex gap-3">
               {["X", "in", "f"].map((s, i) => (
                 <div
@@ -41,10 +40,18 @@ export default function Footer() {
               Product
             </h3>
             <div className="flex flex-col gap-3 text-sm text-gray-400">
-              <Link href="/" className="hover:text-white">How it works</Link>
-              <Link href="/" className="hover:text-white">For Runners</Link>
-              <Link href="/" className="hover:text-white">Pricing</Link>
-              <Link href="/" className="hover:text-white">Safety</Link>
+              <Link href="/how-it-works" className="hover:text-white">
+                How it works
+              </Link>
+              <Link href="/for-runners" className="hover:text-white">
+                For Runners
+              </Link>
+              <Link href="/pricing" className="hover:text-white">
+                Pricing
+              </Link>
+              <Link href="/safety" className="hover:text-white">
+                Safety
+              </Link>
             </div>
           </div>
 
@@ -54,10 +61,18 @@ export default function Footer() {
               Company
             </h3>
             <div className="flex flex-col gap-3 text-sm text-gray-400">
-              <Link href="/" className="hover:text-white">About</Link>
-              <Link href="/" className="hover:text-white">Blog</Link>
-              <Link href="/" className="hover:text-white">Careers</Link>
-              <Link href="/" className="hover:text-white">Press</Link>
+              <Link href="/about" className="hover:text-white">
+                About
+              </Link>
+              <Link href="/blog" className="hover:text-white">
+                Blog
+              </Link>
+              <Link href="/careers" className="hover:text-white">
+                Careers
+              </Link>
+              <Link href="/press" className="hover:text-white">
+                Press
+              </Link>
             </div>
           </div>
 
@@ -81,14 +96,13 @@ export default function Footer() {
 
         </div>
 
-        {/* DIVIDER */}
+        {/* BOTTOM */}
         <div className="mt-12 border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
 
           <p>
             © {new Date().getFullYear()} ERS — Errand Runners System.
           </p>
 
-          {/* LEGAL INLINE LINKS (Glovo-style) */}
           <div className="flex flex-wrap items-center gap-4 text-xs md:text-sm">
             <Link href="/terms-of-service" className="hover:text-white">
               Terms
