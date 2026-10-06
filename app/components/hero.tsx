@@ -1,227 +1,79 @@
-"use client";
+import { ArrowDownRight, ArrowRight, MapPin, ShieldCheck } from "lucide-react";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import { Loader2, ArrowRight, CheckCircle2 } from "lucide-react";
-
-type SubmitStatus = "idle" | "loading" | "success" | "error";
-
-const suggestions = [
-  "Buy groceries from Shoprite",
-  "Deliver a package to Lekki",
-  "Pick up food from KFC",
-  "Get medication from a pharmacy",
-];
-
-export default function Hero({
-  task,
-  setTask,
-}: {
-  task: string;
-  setTask: (v: string) => void;
-}) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [status, setStatus] = useState<SubmitStatus>("idle");
-  const [errorMsg, setErrorMsg] = useState("");
-
-  // Auto-focus when task is set from Categories
-  useEffect(() => {
-    if (task) inputRef.current?.focus();
-  }, [task]);
-
-  const handleSubmit = useCallback(async () => {
-    const trimmed = task.trim();
-    if (!trimmed || status === "loading") return;
-
-    setStatus("loading");
-    setErrorMsg("");
-
-    try {
-      const res = await fetch("/api/errands", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ task: trimmed }),
-      });
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body?.message ?? `Server error (${res.status})`);
-      }
-
-      // Success
-      setStatus("success");
-      setTask("");
-    } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Something went wrong. Try again.";
-      setErrorMsg(message);
-      setStatus("error");
-    }
-  }, [task, status, setTask]);
-
-  // Enter submits
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") handleSubmit();
-    },
-    [handleSubmit]
-  );
-
-  const isLoading = status === "loading";
-  const isSuccess = status === "success";
-
+export default function Hero() {
   return (
-    <section
-      id="hero"
-      className="relative pt-24 pb-32 px-5 sm:px-8"
-      aria-label="Find a runner"
-    >
-      <div className="max-w-2xl mx-auto text-center">
-        {/* Headline */}
-        <h1 className="font-display text-5xl sm:text-6xl md:text-[72px] font-bold leading-[1.05] tracking-tight mb-6">
-          Stop losing hours to{" "}
-          <span className="text-[#1ED760]">errand running.</span>
-        </h1>
+    <section id="hero" className="relative overflow-hidden border-b border-white/[0.06]">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(30,215,96,0.12),transparent_32%)]" />
+      <div className="absolute right-[-12rem] top-24 h-[28rem] w-[28rem] rounded-full border border-[#1ED760]/10" />
+      <div className="absolute right-[-7rem] top-44 h-[18rem] w-[18rem] rounded-full border border-[#1ED760]/10" />
 
-        {/* Subheadline */}
-        <p className="text-lg sm:text-xl text-white/60 leading-relaxed font-light mb-12 max-w-xl mx-auto">
-          Verified runners across Lagos. Real-time tracking. Delivered in minutes, not hours. Join 2,400+ happy users.
-        </p>
+      <div className="relative mx-auto grid max-w-7xl gap-14 px-5 pb-24 pt-20 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-20 lg:pb-32 lg:pt-28">
+        <div>
+          <p className="mb-6 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#1ED760]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#1ED760]" />
+            Built for Lagos
+          </p>
 
-        {/* Input */}
-        <div className="mb-6">
-          <div
-            className={`
-              relative flex flex-col sm:flex-row items-stretch sm:items-center gap-3
-              bg-[#111217] border rounded-lg transition-all duration-200
-              ${
-                status === "error"
-                  ? "border-red-500/50"
-                  : isSuccess
-                  ? "border-[#1ED760]/50"
-                  : "border-white/10"
-              }
-            `}
-          >
-            <input
-              ref={inputRef}
-              value={task}
-              onChange={(e) => {
-                setTask(e.target.value);
-                if (status === "error") setStatus("idle");
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="What do you need done?"
-              disabled={isLoading || isSuccess}
-              aria-label="Describe your errand"
-              aria-describedby={status === "error" ? "hero-error" : undefined}
-              className="
-                flex-1 bg-transparent px-5 py-4 text-white text-base
-                placeholder:text-white/30
-                outline-none disabled:opacity-50
-              "
-            />
+          <h1 className="max-w-4xl font-display text-5xl font-bold leading-[0.96] tracking-[-0.04em] sm:text-6xl lg:text-[82px]">
+            Your errands.
+            <br />
+            <span className="text-[#1ED760]">Handled.</span>
+          </h1>
 
-            <button
-              onClick={handleSubmit}
-              disabled={isLoading || isSuccess || !task.trim()}
-              className="
-                flex items-center justify-center gap-2 shrink-0
-                bg-[#1ED760] text-black
-                px-8 py-4 m-1 rounded-md
-                text-base font-bold tracking-wide
-                hover:bg-[#17c253]
-                active:scale-[0.99]
-                disabled:opacity-40 disabled:cursor-not-allowed
-                transition-all duration-150
-              "
+          <p className="mt-7 max-w-xl text-base leading-7 text-white/60 sm:text-lg">
+            ERS connects you with verified runners who can handle the real-world tasks
+            you do not have time to do — while you stay in control.
+          </p>
+
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <a
+              href="#get-started"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1ED760] px-6 py-3.5 text-sm font-bold text-black transition hover:bg-[#18c955]"
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span className="hidden sm:inline">Matching…</span>
-                </>
-              ) : isSuccess ? (
-                <>
-                  <CheckCircle2 className="w-5 h-5" />
-                  <span>Request sent</span>
-                </>
-              ) : (
-                <>
-                  <span>Get started</span>
-                  <ArrowRight className="w-5 h-5" />
-                </>
-              )}
-            </button>
+              Get started
+              <ArrowRight size={17} />
+            </a>
+            <a
+              href="#how-it-works"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-6 py-3.5 text-sm font-semibold text-white transition hover:border-white/30 hover:bg-white/[0.04]"
+            >
+              See how it works
+              <ArrowDownRight size={17} />
+            </a>
           </div>
 
-          {/* Suggestions */}
-          <div className="flex flex-wrap gap-2 mt-4 justify-center">
-            {suggestions.map((s, i) => (
-              <button
-                key={i}
-                onClick={() => setTask(s)}
-                className="
-                  text-xs px-3 py-1
-                  bg-white/5 border border-white/10
-                  rounded-full
-                  hover:bg-white/10
-                  transition
-                "
-              >
-                {s}
-              </button>
-            ))}
+          <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-xs text-white/45">
+            <span className="flex items-center gap-2"><ShieldCheck size={15} className="text-[#1ED760]" /> Verified runners</span>
+            <span className="flex items-center gap-2"><MapPin size={15} className="text-[#1ED760]" /> Real-time tracking</span>
+            <span className="flex items-center gap-2">Secure payments</span>
           </div>
-
-          {/* Error */}
-          {status === "error" && (
-            <div className="mt-3 flex flex-col items-center gap-2">
-              <p id="hero-error" className="text-red-400 text-sm font-medium">
-                {errorMsg}
-              </p>
-              <button
-                onClick={handleSubmit}
-                className="text-xs underline text-white/60 hover:text-white"
-              >
-                Try again
-              </button>
-            </div>
-          )}
-
-          {/* Success */}
-          {isSuccess && (
-            <p className="text-[#1ED760] text-sm mt-3 font-medium">
-              ✓ Got it. A runner will reach out within 5 minutes.
-            </p>
-          )}
         </div>
 
-        {/* Micro-copy */}
-        <p className="text-sm text-white/40 mb-12">
-          No upfront cost. See available runners in 30 seconds.
-        </p>
+        <div className="relative min-h-[430px] overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b100d]">
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:48px_48px]" />
+          <div className="absolute left-8 top-8 text-xs uppercase tracking-[0.2em] text-white/35">Lagos / ERS</div>
 
-        {/* Trust */}
-        <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/5">
-          <div>
-            <div className="text-2xl font-bold font-display text-white mb-1">
-              4.9★
+          <div className="absolute left-[17%] top-[25%] h-3 w-3 rounded-full bg-[#1ED760] shadow-[0_0_30px_rgba(30,215,96,0.7)]" />
+          <div className="absolute right-[18%] top-[43%] h-3 w-3 rounded-full border-2 border-[#1ED760] bg-[#0b100d]" />
+          <div className="absolute left-[24%] top-[48%] h-[2px] w-[56%] rotate-[13deg] bg-gradient-to-r from-[#1ED760] via-[#1ED760]/50 to-transparent" />
+
+          <div className="absolute left-7 right-7 bottom-7 rounded-2xl border border-white/10 bg-black/55 p-5 backdrop-blur-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-white/40">LIVE ERRAND</p>
+                <p className="mt-1 font-semibold">Pickup → Delivery</p>
+              </div>
+              <span className="rounded-full bg-[#1ED760]/10 px-3 py-1 text-xs font-semibold text-[#1ED760]">
+                In progress
+              </span>
             </div>
-            <div className="text-xs text-white/40">from 2,100+ reviews</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold font-display text-white mb-1">
-              12 min
+            <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div className="h-full w-[68%] rounded-full bg-[#1ED760]" />
             </div>
-            <div className="text-xs text-white/40">average match time</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold font-display text-white mb-1">
-              100%
+            <div className="mt-3 flex justify-between text-xs text-white/35">
+              <span>Runner dispatched</span>
+              <span>68%</span>
             </div>
-            <div className="text-xs text-white/40">verified runners</div>
           </div>
         </div>
       </div>
