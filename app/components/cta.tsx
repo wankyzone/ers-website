@@ -21,8 +21,21 @@ export default function CTA() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, referralCode }),
       });
-      if (!res.ok) throw new Error("Something went wrong. Try again.");
-      const { data } = await res.json();
+
+      const payload = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        const serverMessage =
+          payload?.details || payload?.error || "Something went wrong. Try again.";
+
+        throw new Error(
+          process.env.NODE_ENV !== "production"
+            ? serverMessage
+            : "Something went wrong. Please try again."
+        );
+      }
+
+      const { data } = payload;
       setReferralLink(`${window.location.origin}?ref=${data.referral_code}`);
       setEmail(""); setStatus("success");
     } catch (err) {
@@ -32,7 +45,7 @@ export default function CTA() {
   };
 
   return (
-    <section id="get-started" className="bg-[#101512] px-5 py-20 text-white sm:px-8 sm:py-28">
+    <section id="get-started" className="bg-[#101512] px-4 py-20 text-white sm:px-6 sm:py-28 lg:px-8">
       <div className="mx-auto max-w-4xl text-center">
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#66e38f]">Get early access</p>
         <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.04em] sm:text-6xl">
@@ -42,7 +55,7 @@ export default function CTA() {
           Join the ERS waitlist and be among the first people to use ERS in Lagos.
         </p>
 
-        <div className="mx-auto mt-9 flex max-w-2xl flex-col gap-2 rounded-2xl bg-white p-2 sm:flex-row">
+        <div className="mx-auto mt-9 flex max-w-2xl flex-col gap-2 rounded-[24px] bg-white p-2 shadow-[0_20px_40px_rgba(0,0,0,0.16)] sm:flex-row">
           <div className="flex min-w-0 flex-1 items-center gap-3 px-4">
             <Mail size={19} className="shrink-0 text-[#19a957]" />
             <input
@@ -66,7 +79,7 @@ export default function CTA() {
 
         {status === "error" && <p className="mt-4 text-sm text-red-300">{error}</p>}
         {referralLink && (
-          <div className="mx-auto mt-6 max-w-2xl rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+          <div className="mx-auto mt-6 max-w-2xl rounded-[20px] border border-white/10 bg-white/5 p-4 text-left">
             <p className="text-xs uppercase tracking-wider text-white/40">Your referral link</p>
             <p className="mt-2 break-all text-sm text-[#66e38f]">{referralLink}</p>
           </div>

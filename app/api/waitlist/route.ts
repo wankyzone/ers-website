@@ -6,10 +6,23 @@ function getSupabase() {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !key) {
-    throw new Error("Missing Supabase env vars");
+    const missing = [
+      !url ? "NEXT_PUBLIC_SUPABASE_URL" : null,
+      !key ? "SUPABASE_SERVICE_ROLE_KEY" : null,
+    ].filter(Boolean) as string[];
+
+    throw new Error(
+      `Missing Supabase env vars: ${missing.join(", ")}`
+    );
   }
 
   return createClient(url, key);
+}
+
+function getSafeErrorMessage(message: string) {
+  const isDev = process.env.NODE_ENV !== "production";
+
+  return isDev ? message : "Something went wrong. Please try again.";
 }
 
 // Stronger referral code generator
@@ -81,10 +94,15 @@ export async function POST(req: Request) {
       .single();
 
     if (error) {
+      const insertError = error.message || "Failed to join waitlist";
       console.error("Insert error:", error);
 
       return NextResponse.json(
-        { ok: false, error: "Failed to join waitlist" },
+        {
+          ok: false,
+          error: getSafeErrorMessage(insertError),
+          details: process.env.NODE_ENV !== "production" ? insertError : undefined,
+        },
         { status: 500 }
       );
     }
@@ -109,10 +127,15 @@ export async function POST(req: Request) {
     });
 
   } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown server error";
     console.error("Waitlist API error:", err);
 
     return NextResponse.json(
-      { ok: false, error: "Server error" },
+      {
+        ok: false,
+        error: getSafeErrorMessage(message),
+        details: process.env.NODE_ENV !== "production" ? message : undefined,
+      },
       { status: 500 }
     );
   }

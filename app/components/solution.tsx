@@ -8,7 +8,7 @@ const features = [
 
 export default function Solution() {
   return (
-    <section className="bg-white px-5 py-20 sm:px-8 sm:py-28">
+    <section className="bg-white px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div className="max-w-2xl">
@@ -22,10 +22,10 @@ export default function Solution() {
           </p>
         </div>
 
-        <div className="mt-12 grid overflow-hidden rounded-[2rem] border border-black/5 bg-[#101512] md:grid-cols-3">
+        <div className="mt-12 grid overflow-hidden rounded-[30px] border border-[#e7ece8] bg-[#101512] md:grid-cols-3">
           {features.map(({ title, description, icon: Icon }, index) => (
             <article key={title} className={`p-7 sm:p-9 ${index > 0 ? "border-t border-white/10 md:border-l md:border-t-0" : ""}`}>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#19c963] text-white">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#19c963] text-white shadow-[0_10px_25px_rgba(25,201,99,0.35)]">
                 <Icon size={21} />
               </div>
               <h3 className="mt-8 text-xl font-bold text-white">{title}</h3>

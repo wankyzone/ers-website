@@ -8,7 +8,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="bg-white px-5 py-20 sm:px-8 sm:py-28">
+    <section id="how-it-works" className="bg-white px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="max-w-2xl">
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#0e9f4c]">Simple process</p>
@@ -19,10 +19,10 @@ export default function HowItWorks() {
 
         <div className="mt-12 grid gap-5 md:grid-cols-3">
           {steps.map(({ number, title, desc, icon: Icon }) => (
-            <article key={number} className="rounded-3xl border border-black/8 bg-[#f5f7f4] p-7 transition hover:-translate-y-1 hover:shadow-xl">
+            <article key={number} className="rounded-[28px] border border-[#e5eadf] bg-[#f5f7f4] p-7 shadow-[0_12px_30px_rgba(16,21,18,0.03)] transition hover:-translate-y-1 hover:shadow-xl">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-extrabold text-[#19a957]">{number}</span>
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#19c963] text-white">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#19c963] text-white shadow-sm">
                   <Icon size={20} />
                 </div>
               </div>

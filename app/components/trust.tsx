@@ -9,7 +9,7 @@ const trustPoints = [
 
 export default function Trust() {
   return (
-    <section className="bg-[#f5f7f4] px-5 py-20 sm:px-8 sm:py-28">
+    <section className="bg-[#f5f7f4] px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="max-w-2xl">
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#0e9f4c]">Trust & safety</p>
@@ -23,7 +23,7 @@ export default function Trust() {
 
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {trustPoints.map(({ title, description, icon: Icon }) => (
-            <article key={title} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+            <article key={title} className="rounded-[26px] bg-white p-6 shadow-[0_12px_30px_rgba(16,21,18,0.03)] ring-1 ring-[#ebf0ec]">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#e3f8ea] text-[#0e9f4c]">
                 <Icon size={20} />
               </div>

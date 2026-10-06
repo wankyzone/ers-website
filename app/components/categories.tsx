@@ -13,7 +13,7 @@ const categories = [
 
 export default function Categories() {
   return (
-    <section className="bg-[#f5f7f4] px-5 py-20 sm:px-8 sm:py-28">
+    <section className="bg-[#f5f7f4] px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div className="max-w-2xl">
@@ -27,7 +27,7 @@ export default function Categories() {
 
         <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {categories.map(([title, Icon, description]) => (
-            <div key={title} className="group rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-lg">
+            <div key={title} className="group rounded-[24px] bg-white p-5 shadow-[0_12px_25px_rgba(16,21,18,0.03)] ring-1 ring-[#e8efe9] transition hover:-translate-y-1 hover:shadow-lg">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e3f8ea] text-[#0e9f4c] transition group-hover:bg-[#19c963] group-hover:text-white">
                 <Icon size={21} />
               </div>
