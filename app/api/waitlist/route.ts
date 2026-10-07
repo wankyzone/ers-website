@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     // Check if email already exists
     const { data: existing } = await supabase
       .from("waitlist")
-      .select("id")
+      .select("id, referral_code")
       .eq("email", email)
       .maybeSingle();
 
@@ -62,6 +62,7 @@ export async function POST(req: Request) {
       return NextResponse.json({
         ok: true,
         message: "Already on waitlist",
+        data: existing,
       });
     }
 

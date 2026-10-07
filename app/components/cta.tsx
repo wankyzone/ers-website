@@ -35,9 +35,14 @@ export default function CTA() {
         );
       }
 
-      const { data } = payload;
-      setReferralLink(`${window.location.origin}?ref=${data.referral_code}`);
-      setEmail(""); setStatus("success");
+      const returnedReferralCode = payload?.data?.referral_code;
+
+      if (returnedReferralCode) {
+        setReferralLink(`${window.location.origin}?ref=${returnedReferralCode}`);
+      }
+
+      setEmail("");
+      setStatus("success");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setStatus("error");
