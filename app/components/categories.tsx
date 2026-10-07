@@ -1,132 +1,40 @@
 "use client";
 
-import {
-  ShoppingCart,
-  Package,
-  Pill,
-  Box,
-  Zap,
-  Coffee,
-} from "lucide-react";
+import { ShoppingCart, Package, Pill, Box, Zap, Coffee } from "lucide-react";
 
 const categories = [
-  {
-    title: "Groceries",
-    task: "Buy groceries from the nearest store",
-    icon: ShoppingCart,
-    color: "text-green-400 bg-green-500/10",
-  },
-  {
-    title: "Deliveries",
-    task: "Deliver a package across town",
-    icon: Package,
-    color: "text-blue-400 bg-blue-500/10",
-  },
-  {
-    title: "Pharmacy",
-    task: "Pick up medication from a pharmacy",
-    icon: Pill,
-    color: "text-yellow-400 bg-yellow-500/10",
-  },
-  {
-    title: "Packages",
-    task: "Send a package to a location",
-    icon: Box,
-    color: "text-purple-400 bg-purple-500/10",
-  },
-  {
-    title: "Quick Tasks",
-    task: "Run a quick errand nearby",
-    icon: Zap,
-    color: "text-orange-400 bg-orange-500/10",
-  },
-  {
-    title: "Food & Drinks",
-    task: "Pick up food or drinks",
-    icon: Coffee,
-    color: "text-pink-400 bg-pink-500/10",
-  },
-];
+  ["Groceries", ShoppingCart, "Everyday shopping and household items"],
+  ["Pickups", Package, "Collect something and bring it to you"],
+  ["Pharmacy", Pill, "Pick up pharmacy essentials"],
+  ["Packages", Box, "Move a package across Lagos"],
+  ["Quick errands", Zap, "Handle a task while you stay focused"],
+  ["Food & drinks", Coffee, "Pick up food or drinks for you"],
+] as const;
 
-export default function Categories({
-  setTask,
-}: {
-  setTask: (v: string) => void;
-}) {
+export default function Categories() {
   return (
-    <section className="py-24 px-6">
-      <div className="max-w-6xl mx-auto text-center">
+    <section className="bg-[#f5f7f4] px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div className="max-w-2xl">
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#0e9f4c]">What can ERS handle?</p>
+            <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.04em] text-[#101512] sm:text-5xl">
+              The little things. The urgent things. The things you simply do not have time for.
+            </h2>
+          </div>
+          <p className="max-w-sm text-sm leading-6 text-[#66716a]">One runner, one errand at a time — structured from request to completion.</p>
+        </div>
 
-        {/* Label */}
-        <p className="text-xs tracking-widest text-white/40 mb-4">
-          WHAT CAN WE DO FOR YOU?
-        </p>
-
-        {/* Headline (NEW) */}
-        <h2 className="text-3xl sm:text-4xl font-display font-bold mb-12">
-          Popular errands people run with ERS
-        </h2>
-
-        {/* Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
-
-          {categories.map((cat, i) => {
-            const Icon = cat.icon;
-
-            return (
-              <div
-                key={i}
-                onClick={() => {
-                  setTask(cat.task); // ✅ USE REAL TASK
-
-                  const el = document.getElementById("hero");
-                  if (el) {
-                    el.scrollIntoView({ behavior: "smooth" });
-                  }
-                }}
-                className="
-                  group
-                  bg-[#111217]
-                  border border-white/10
-                  rounded-2xl
-                  p-6
-                  flex flex-col items-center justify-center
-                  cursor-pointer
-                  transition-all duration-300
-                  hover:-translate-y-2
-                  hover:border-white/20
-                  hover:shadow-[0_0_40px_rgba(30,215,96,0.08)]
-                "
-              >
-                {/* Icon */}
-                <div
-                  className={`
-                    ${cat.color}
-                    w-12 h-12
-                    flex items-center justify-center
-                    rounded-xl
-                    mb-4
-                    transition-all duration-300
-                    group-hover:scale-110
-                  `}
-                >
-                  <Icon size={20} />
-                </div>
-
-                {/* Title */}
-                <p className="text-sm text-white font-medium mb-1">
-                  {cat.title}
-                </p>
-
-                {/* Subtext (NEW — subtle but powerful) */}
-                <p className="text-xs text-white/40 text-center leading-tight">
-                  {cat.task}
-                </p>
-
+        <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {categories.map(([title, Icon, description]) => (
+            <div key={title} className="group rounded-[24px] bg-white p-5 shadow-[0_12px_25px_rgba(16,21,18,0.03)] ring-1 ring-[#e8efe9] transition hover:-translate-y-1 hover:shadow-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e3f8ea] text-[#0e9f4c] transition group-hover:bg-[#19c963] group-hover:text-white">
+                <Icon size={21} />
               </div>
-            );
-          })}
-
+              <h3 className="mt-5 text-sm font-bold text-[#101512]">{title}</h3>
+              <p className="mt-2 text-xs leading-5 text-[#7a847d]">{description}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

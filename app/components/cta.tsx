@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight, Mail } from "lucide-react";
 import { useState } from "react";
 
 type Status = "idle" | "loading" | "success" | "error";
@@ -12,134 +13,83 @@ export default function CTA() {
 
   const handleJoin = async () => {
     if (!email || status === "loading") return;
-
-    setStatus("loading");
-    setError("");
-
+    setStatus("loading"); setError("");
     try {
-      const urlParams = new URLSearchParams(window.location.search);
-      const referralCode = urlParams.get("ref");
-
+      const referralCode = new URLSearchParams(window.location.search).get("ref");
       const res = await fetch("/api/waitlist", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, referralCode }),
       });
 
+      const payload = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        throw new Error("Something went wrong. Try again.");
+        const serverMessage =
+          payload?.details || payload?.error || "Something went wrong. Try again.";
+
+        throw new Error(
+          process.env.NODE_ENV !== "production"
+            ? serverMessage
+            : "Something went wrong. Please try again."
+        );
       }
 
-      const { data } = await res.json();
+      const returnedReferralCode = payload?.data?.referral_code;
 
-      const link = `${window.location.origin}?ref=${data.referral_code}`;
-      setReferralLink(link);
+      if (returnedReferralCode) {
+        setReferralLink(`${window.location.origin}?ref=${returnedReferralCode}`);
+      }
+
       setEmail("");
       setStatus("success");
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong"
-      );
+      setError(err instanceof Error ? err.message : "Something went wrong");
       setStatus("error");
     }
   };
 
   return (
-    <section className="py-28 text-center px-6">
-
-      {/* Headline */}
-      <h2 className="text-4xl font-bold text-white mb-4">
-        Skip the queue. Invite friends.
-      </h2>
-
-      <p className="text-white/50 mb-8">
-        Join early and get priority access.
-      </p>
-
-      {/* Input */}
-      <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-xl mx-auto">
-
-        <input
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleJoin();
-          }}
-          placeholder="Enter your email"
-          disabled={status === "loading" || status === "success"}
-          className="
-            flex-1 px-4 py-3
-            bg-[#111217]
-            border border-white/10
-            rounded-md
-            text-white
-            placeholder:text-white/30
-            outline-none
-            disabled:opacity-50
-          "
-        />
-
-        <button
-          onClick={handleJoin}
-          disabled={!email || status === "loading"}
-          className="
-            px-6 py-3
-            bg-[#1ED760] text-black
-            rounded-md font-semibold
-            hover:bg-[#17c253]
-            disabled:opacity-40 disabled:cursor-not-allowed
-            transition
-          "
-        >
-          {status === "loading"
-            ? "Joining..."
-            : status === "success"
-            ? "Joined ✓"
-            : "Join"}
-        </button>
-
-      </div>
-
-      {/* Error */}
-      {status === "error" && (
-        <p className="text-red-400 mt-4 text-sm">
-          {error}
+    <section id="get-started" className="bg-[#101512] px-4 py-20 text-white sm:px-6 sm:py-28 lg:px-8">
+      <div className="mx-auto max-w-4xl text-center">
+        <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#66e38f]">Get early access</p>
+        <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.04em] sm:text-6xl">
+          Your next errand can be the easy one.
+        </h2>
+        <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-white/60">
+          Join the ERS waitlist and be among the first people to use ERS in Lagos.
         </p>
-      )}
 
-      {/* Success */}
-      {referralLink && (
-        <div className="mt-8 p-5 bg-[#111217] border border-white/5 rounded-lg max-w-xl mx-auto">
-          <p className="text-sm text-white/50 mb-2">
-            Your referral link
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center gap-3">
-            <p className="text-[#1ED760] break-all text-sm">
-              {referralLink}
-            </p>
-
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(referralLink);
-              }}
-              className="
-                px-3 py-1 text-xs
-                border border-white/20
-                rounded
-                hover:bg-white/5
-              "
-            >
-              Copy
-            </button>
+        <div className="mx-auto mt-9 flex max-w-2xl flex-col gap-2 rounded-[24px] bg-white p-2 shadow-[0_20px_40px_rgba(0,0,0,0.16)] sm:flex-row">
+          <div className="flex min-w-0 flex-1 items-center gap-3 px-4">
+            <Mail size={19} className="shrink-0 text-[#19a957]" />
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleJoin(); }}
+              placeholder="Enter your email"
+              disabled={status === "loading" || status === "success"}
+              className="min-w-0 flex-1 bg-transparent py-3 text-sm text-[#101512] outline-none placeholder:text-[#87918a]"
+            />
           </div>
+          <button
+            onClick={handleJoin}
+            disabled={!email || status === "loading"}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#19c963] px-6 py-3.5 text-sm font-bold text-[#07110b] transition hover:bg-[#16b95a] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {status === "loading" ? "Joining..." : status === "success" ? "Joined ✓" : "Join ERS"}
+            {status !== "loading" && status !== "success" && <ArrowRight size={16} />}
+          </button>
         </div>
-      )}
 
+        {status === "error" && <p className="mt-4 text-sm text-red-300">{error}</p>}
+        {referralLink && (
+          <div className="mx-auto mt-6 max-w-2xl rounded-[20px] border border-white/10 bg-white/5 p-4 text-left">
+            <p className="text-xs uppercase tracking-wider text-white/40">Your referral link</p>
+            <p className="mt-2 break-all text-sm text-[#66e38f]">{referralLink}</p>
+          </div>
+        )}
+      </div>
     </section>
   );
 }

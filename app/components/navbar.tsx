@@ -1,106 +1,64 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
-  const handleNavClick = () => {
-    setOpen(false); // ✅ close mobile menu on click
-  };
-
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-[#0B0D12]/70 border-b border-white/10">
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-
-        {/* LEFT: Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-[#1ED760] rounded-md flex items-center justify-center">
-            <div className="w-2 h-2 bg-black rounded-full" />
-          </div>
-
-          <span className="text-white font-semibold text-sm tracking-tight">
-            ERS
-          </span>
-
-          <span className="text-gray-500 text-xs hidden sm:block">
-            Errand Runners
-          </span>
+    <nav className="sticky top-0 z-50 border-b border-[#dfeae1] bg-white/90 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center" aria-label="ERS home">
+          <Image
+            src="/ers-logo.png"
+            alt="ERS logo"
+            width={180}
+            height={48}
+            priority
+            className="h-10 w-auto"
+          />
         </Link>
 
-        {/* CENTER: Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8 text-sm text-gray-400">
-          <Link href="/how-it-works" className="hover:text-white transition">
-            How it works
-          </Link>
-          <Link href="/for-runners" className="hover:text-white transition">
-            For Runners
-          </Link>
-          <Link href="/pricing" className="hover:text-white transition">
-            Pricing
-          </Link>
+        <div className="hidden items-center gap-7 text-sm font-medium text-[#47554d] md:flex">
+          <Link href="/how-it-works" className="transition hover:text-[#101512]">How it works</Link>
+          <Link href="/for-runners" className="transition hover:text-[#101512]">For Runners</Link>
+          <Link href="/safety" className="transition hover:text-[#101512]">Safety</Link>
+          <Link href="/about" className="transition hover:text-[#101512]">About</Link>
         </div>
 
-        {/* RIGHT */}
-        <div className="flex items-center gap-3">
-
-          {/* CTA */}
-          <a
-            href="#hero"
-            className="
-              hidden sm:inline-block
-              px-5 py-2 rounded-lg font-medium
-              bg-[#1ED760] text-black
-              transition-all duration-300
-              hover:scale-105
-              hover:shadow-[0_0_20px_rgba(30,215,96,0.25)]
-            "
-          >
+        <div className="flex items-center gap-2 sm:gap-3">
+          <a href="#get-started" className="hidden rounded-full border border-[#dfeae1] px-4 py-2.5 text-sm font-semibold text-[#101512] transition hover:bg-[#f3f7f3] sm:inline-flex">
+            Sign in
+          </a>
+          <a href="#get-started" className="hidden rounded-full bg-[#101512] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#1f2a24] sm:inline-flex">
             Get started
           </a>
-
-          {/* Mobile toggle */}
           <button
-            onClick={() => setOpen(!open)}
-            className="md:hidden p-2 rounded-lg border border-white/10"
+            type="button"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpen((value) => !value)}
+            className="rounded-xl border border-[#dfeae1] p-2 text-[#101512] md:hidden"
           >
-            {open ? <X size={18} /> : <Menu size={18} />}
+            {open ? <X size={20} /> : <Menu size={20} />}
           </button>
-
         </div>
       </div>
 
-      {/* MOBILE MENU */}
       {open && (
-        <div className="md:hidden px-6 pb-4 space-y-4 text-sm text-gray-400 border-t border-white/10">
-
-          <Link href="/how-it-works" onClick={handleNavClick} className="block hover:text-white">
-            How it works
-          </Link>
-
-          <Link href="/for-runners" onClick={handleNavClick} className="block hover:text-white">
-            For Runners
-          </Link>
-
-          <Link href="/pricing" onClick={handleNavClick} className="block hover:text-white">
-            Pricing
-          </Link>
-
-          <a
-            href="#hero"
-            onClick={handleNavClick}
-            className="
-              block text-center
-              mt-2 px-4 py-3
-              rounded-lg bg-[#1ED760]
-              text-black font-medium
-            "
-          >
-            Get started
-          </a>
-
+        <div className="border-t border-[#eaece8] bg-white px-5 py-5 md:hidden">
+          <div className="mx-auto flex max-w-7xl flex-col gap-4 text-sm font-medium text-[#47554d]">
+            <Link href="/how-it-works" onClick={() => setOpen(false)}>How it works</Link>
+            <Link href="/for-runners" onClick={() => setOpen(false)}>For Runners</Link>
+            <Link href="/safety" onClick={() => setOpen(false)}>Safety</Link>
+            <Link href="/about" onClick={() => setOpen(false)}>About</Link>
+            <a href="#get-started" onClick={() => setOpen(false)} className="mt-2 rounded-full bg-[#101512] px-5 py-3 text-center font-semibold text-white">
+              Get started
+            </a>
+          </div>
         </div>
       )}
     </nav>

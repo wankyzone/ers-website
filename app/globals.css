@@ -1,76 +1,12 @@
-/* Add these to your existing globals.css */
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* ─── Brand design tokens ──────────────────────────────────────────── */
-:root {
-  --color-bg:        #0B0D12;
-  --color-surface:   #111217;
-  --color-border:    rgba(255,255,255,0.08);
-  --color-green:     #1ED760;
-  --color-green-dim: #17c253;
-  --color-text:      #FFFFFF;
-  --color-muted:     rgba(255,255,255,0.45);
-
-  --font-display: var(--font-syne);
-  --font-body:    var(--font-dm-sans);
-
-  /* Spacing scale used across sections */
-  --section-py:   clamp(4rem, 8vw, 7rem);
-}
-
-/* ─── Base ─────────────────────────────────────────────────────────── */
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: var(--font-body), sans-serif;
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* ─── Font utility classes ─────────────────────────────────────────── */
-.font-display {
-  font-family: var(--font-display), sans-serif;
-}
-
-/* ─── Selection ────────────────────────────────────────────────────── */
-::selection {
-  background-color: #1ED76040;
-  color: #fff;
-}
-
-/* ─── Scrollbar (desktop) ──────────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-bg);
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.2);
-}
-
-/* ─── Focus visible global reset ───────────────────────────────────── */
-:focus-visible {
-  outline: 2px solid var(--color-green);
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-
-/* ─── Placeholder animation for hero ───────────────────────────────── */
-@keyframes fadeSlide {
-  0%   { opacity: 0; transform: translateY(6px); }
-  15%  { opacity: 1; transform: translateY(0); }
-  85%  { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-6px); }
+:root { --ers-green: #19c963; --ers-ink: #101512; --ers-muted: #66716a; --ers-soft: #f4f7f3; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: #fff; color: var(--ers-ink); font-family: var(--font-body), Arial, sans-serif; }
+::selection { background: var(--ers-green); color: #07110b; }
+:focus-visible { outline: 2px solid var(--ers-green); outline-offset: 3px; }
+.font-display { font-family: var(--font-display), Arial, sans-serif; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }

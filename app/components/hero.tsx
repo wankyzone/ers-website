@@ -1,227 +1,109 @@
-"use client";
+import { ArrowRight, CheckCircle2, MapPin, Package, ShoppingBag, Sparkles } from "lucide-react";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import { Loader2, ArrowRight, CheckCircle2 } from "lucide-react";
-
-type SubmitStatus = "idle" | "loading" | "success" | "error";
-
-const suggestions = [
-  "Buy groceries from Shoprite",
-  "Deliver a package to Lekki",
-  "Pick up food from KFC",
-  "Get medication from a pharmacy",
-];
-
-export default function Hero({
-  task,
-  setTask,
-}: {
-  task: string;
-  setTask: (v: string) => void;
-}) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [status, setStatus] = useState<SubmitStatus>("idle");
-  const [errorMsg, setErrorMsg] = useState("");
-
-  // Auto-focus when task is set from Categories
-  useEffect(() => {
-    if (task) inputRef.current?.focus();
-  }, [task]);
-
-  const handleSubmit = useCallback(async () => {
-    const trimmed = task.trim();
-    if (!trimmed || status === "loading") return;
-
-    setStatus("loading");
-    setErrorMsg("");
-
-    try {
-      const res = await fetch("/api/errands", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ task: trimmed }),
-      });
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body?.message ?? `Server error (${res.status})`);
-      }
-
-      // Success
-      setStatus("success");
-      setTask("");
-    } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Something went wrong. Try again.";
-      setErrorMsg(message);
-      setStatus("error");
-    }
-  }, [task, status, setTask]);
-
-  // Enter submits
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") handleSubmit();
-    },
-    [handleSubmit]
-  );
-
-  const isLoading = status === "loading";
-  const isSuccess = status === "success";
-
+export default function Hero() {
   return (
-    <section
-      id="hero"
-      className="relative pt-24 pb-32 px-5 sm:px-8"
-      aria-label="Find a runner"
-    >
-      <div className="max-w-2xl mx-auto text-center">
-        {/* Headline */}
-        <h1 className="font-display text-5xl sm:text-6xl md:text-[72px] font-bold leading-[1.05] tracking-tight mb-6">
-          Stop losing hours to{" "}
-          <span className="text-[#1ED760]">errand running.</span>
-        </h1>
+    <section className="relative overflow-hidden bg-[#f3f7f3] text-[#101512]">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(25,201,99,0.14),_transparent_38%),radial-gradient(circle_at_bottom_right,_rgba(16,21,18,0.08),_transparent_40%)]" />
 
-        {/* Subheadline */}
-        <p className="text-lg sm:text-xl text-white/60 leading-relaxed font-light mb-12 max-w-xl mx-auto">
-          Verified runners across Lagos. Real-time tracking. Delivered in minutes, not hours. Join 2,400+ happy users.
-        </p>
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-14 pt-10 sm:px-6 sm:pb-16 sm:pt-14 lg:grid-cols-[1fr_1.05fr] lg:gap-14 lg:px-8 lg:pb-20 lg:pt-20">
+        <div>
+          <p className="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-[#187e46]">Built for Lagos</p>
 
-        {/* Input */}
-        <div className="mb-6">
-          <div
-            className={`
-              relative flex flex-col sm:flex-row items-stretch sm:items-center gap-3
-              bg-[#111217] border rounded-lg transition-all duration-200
-              ${
-                status === "error"
-                  ? "border-red-500/50"
-                  : isSuccess
-                  ? "border-[#1ED760]/50"
-                  : "border-white/10"
-              }
-            `}
-          >
-            <input
-              ref={inputRef}
-              value={task}
-              onChange={(e) => {
-                setTask(e.target.value);
-                if (status === "error") setStatus("idle");
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="What do you need done?"
-              disabled={isLoading || isSuccess}
-              aria-label="Describe your errand"
-              aria-describedby={status === "error" ? "hero-error" : undefined}
-              className="
-                flex-1 bg-transparent px-5 py-4 text-white text-base
-                placeholder:text-white/30
-                outline-none disabled:opacity-50
-              "
-            />
+          <h1 className="max-w-xl font-display text-5xl font-extrabold leading-[0.9] tracking-[-0.06em] text-[#101512] sm:text-6xl lg:text-[76px]">
+            Need it done?
+            <br />
+            <span className="text-[#0b7f3e]">Send an ERS Runner.</span>
+          </h1>
 
-            <button
-              onClick={handleSubmit}
-              disabled={isLoading || isSuccess || !task.trim()}
-              className="
-                flex items-center justify-center gap-2 shrink-0
-                bg-[#1ED760] text-black
-                px-8 py-4 m-1 rounded-md
-                text-base font-bold tracking-wide
-                hover:bg-[#17c253]
-                active:scale-[0.99]
-                disabled:opacity-40 disabled:cursor-not-allowed
-                transition-all duration-150
-              "
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span className="hidden sm:inline">Matching…</span>
-                </>
-              ) : isSuccess ? (
-                <>
-                  <CheckCircle2 className="w-5 h-5" />
-                  <span>Request sent</span>
-                </>
-              ) : (
-                <>
-                  <span>Get started</span>
-                  <ArrowRight className="w-5 h-5" />
-                </>
-              )}
-            </button>
-          </div>
+          <p className="mt-7 max-w-xl text-base leading-7 text-[#4c5752] sm:text-lg">
+            From groceries and pickups to pharmacy runs and everyday tasks, ERS helps you get real-world errands handled without the usual friction.
+          </p>
 
-          {/* Suggestions */}
-          <div className="flex flex-wrap gap-2 mt-4 justify-center">
-            {suggestions.map((s, i) => (
-              <button
-                key={i}
-                onClick={() => setTask(s)}
-                className="
-                  text-xs px-3 py-1
-                  bg-white/5 border border-white/10
-                  rounded-full
-                  hover:bg-white/10
-                  transition
-                "
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-
-          {/* Error */}
-          {status === "error" && (
-            <div className="mt-3 flex flex-col items-center gap-2">
-              <p id="hero-error" className="text-red-400 text-sm font-medium">
-                {errorMsg}
-              </p>
-              <button
-                onClick={handleSubmit}
-                className="text-xs underline text-white/60 hover:text-white"
-              >
-                Try again
-              </button>
+          <div className="mt-8 max-w-xl rounded-[26px] border border-[#dfeae1] bg-white p-3 shadow-[0_22px_60px_rgba(16,21,18,0.08)]">
+            <div className="flex items-start gap-3 rounded-[18px] border border-[#edf3ef] bg-[#f7faf7] p-3 sm:p-4">
+              <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full bg-[#e7f8ee] text-[#0d8d46]">
+                <MapPin size={18} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#6a7a71]">What do you need done in Lagos?</p>
+                <p className="mt-2 text-base font-semibold text-[#101512] sm:text-lg">Groceries, pharmacy, packages, and quick errands</p>
+              </div>
             </div>
-          )}
 
-          {/* Success */}
-          {isSuccess && (
-            <p className="text-[#1ED760] text-sm mt-3 font-medium">
-              ✓ Got it. A runner will reach out within 5 minutes.
-            </p>
-          )}
+            <div className="mt-3 flex flex-wrap gap-2">
+              {['Groceries', 'Pickups', 'Pharmacy', 'Packages'].map((item) => (
+                <span key={item} className="rounded-full border border-[#dfeae1] bg-[#f4f7f4] px-3 py-1.5 text-xs font-semibold text-[#2b3a32]">{item}</span>
+              ))}
+            </div>
+
+            <div className="mt-4 flex items-center justify-between gap-3 rounded-[18px] bg-[#101512] p-2 text-white shadow-[0_18px_30px_rgba(16,21,18,0.22)]">
+              <div className="flex items-center gap-2 text-sm text-white/80">
+                <Sparkles size={15} className="text-[#66e38f]" />
+                <span>Ready when you are</span>
+              </div>
+              <a href="#get-started" className="inline-flex items-center gap-2 rounded-full bg-[#19c963] px-4 py-2.5 text-sm font-bold text-[#07110b] transition hover:bg-[#15b559]">
+                Get started <ArrowRight size={16} />
+              </a>
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-[#4d5852]">
+            <span className="inline-flex items-center gap-2"><CheckCircle2 size={16} className="text-[#0d8d46]" /> Verified runners</span>
+            <span className="inline-flex items-center gap-2"><CheckCircle2 size={16} className="text-[#0d8d46]" /> Live tracking</span>
+            <span className="inline-flex items-center gap-2"><CheckCircle2 size={16} className="text-[#0d8d46]" /> Secure payments</span>
+          </div>
         </div>
 
-        {/* Micro-copy */}
-        <p className="text-sm text-white/40 mb-12">
-          No upfront cost. See available runners in 30 seconds.
-        </p>
+        <div className="relative mx-auto w-full max-w-[620px]">
+          <div className="absolute -right-6 -top-6 h-28 w-28 rounded-full bg-[#19c963]/20 blur-3xl" />
+          <div className="absolute -bottom-10 -left-8 h-40 w-40 rounded-full bg-[#101512]/10 blur-3xl" />
 
-        {/* Trust */}
-        <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/5">
-          <div>
-            <div className="text-2xl font-bold font-display text-white mb-1">
-              4.9★
+          <div className="relative overflow-hidden rounded-[30px] border border-[#dfeae1] bg-[#0d1712] p-4 shadow-[0_30px_90px_rgba(10,15,12,0.22)] sm:p-6">
+            <div className="absolute inset-0 opacity-30" style={{
+              background: "radial-gradient(circle at 25% 20%, rgba(25,201,99,0.18), transparent 18%), linear-gradient(140deg, rgba(255,255,255,0.04), rgba(255,255,255,0))",
+            }} />
+
+            <div className="relative flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/50">Live errand</p>
+                <p className="mt-2 text-xl font-bold text-white">Lekki → Victoria Island</p>
+              </div>
+              <span className="rounded-full bg-[#19c963]/15 px-3 py-1.5 text-[11px] font-bold text-[#7be2a0]">In progress</span>
             </div>
-            <div className="text-xs text-white/40">from 2,100+ reviews</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold font-display text-white mb-1">
-              12 min
+
+            <div className="relative mt-8 rounded-[24px] border border-white/10 bg-[#0f1d16]/80 p-4 backdrop-blur-sm">
+              <svg className="h-52 w-full" viewBox="0 0 520 220" fill="none" aria-label="Illustrated Lagos route">
+                <path d="M26 154C88 118 120 72 188 88C244 101 284 182 360 166C405 156 441 116 493 62" stroke="#2d4d3d" strokeWidth="20" strokeLinecap="round"/>
+                <path d="M26 154C88 118 120 72 188 88C244 101 284 182 360 166C405 156 441 116 493 62" stroke="#19c963" strokeWidth="4" strokeLinecap="round" strokeDasharray="9 12"/>
+                <circle cx="26" cy="154" r="9" fill="#19c963"/>
+                <circle cx="493" cy="62" r="11" fill="#fff"/>
+                <circle cx="493" cy="62" r="5" fill="#19c963"/>
+              </svg>
             </div>
-            <div className="text-xs text-white/40">average match time</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold font-display text-white mb-1">
-              100%
+
+            <div className="relative mt-5 grid gap-3 sm:grid-cols-3">
+              {[
+                { icon: ShoppingBag, label: "Groceries", value: "Picked up" },
+                { icon: Package, label: "Package", value: "On the way" },
+                { icon: Sparkles, label: "Runner", value: "Verified" },
+              ].map(({ icon: Icon, label, value }) => (
+                <div key={label} className="rounded-[18px] border border-white/10 bg-white/5 p-3 backdrop-blur-sm">
+                  <Icon size={18} className="text-[#66e38f]" />
+                  <p className="mt-4 text-[10px] font-medium uppercase tracking-[0.16em] text-white/45">{label}</p>
+                  <p className="mt-2 text-sm font-semibold text-white">{value}</p>
+                </div>
+              ))}
             </div>
-            <div className="text-xs text-white/40">verified runners</div>
+
+            <div className="relative mt-5 rounded-[20px] border border-white/10 bg-white/8 p-4 backdrop-blur-md">
+              <div className="flex items-center justify-between text-[11px] text-white/60">
+                <span>Runner dispatched</span>
+                <span className="font-bold text-[#66e38f]">68%</span>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+                <div className="h-full w-[68%] rounded-full bg-[#19c963]" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
