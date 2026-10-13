@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/server.js";
 import { createClient } from "@supabase/supabase-js";
 
 function getSupabase() {
@@ -41,7 +41,10 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     const email = body?.email?.toLowerCase()?.trim();
-    const referralCode = body?.referralCode || null;
+    const requestedReferralCode =
+      typeof body?.referralCode === "string"
+        ? body.referralCode.trim().toUpperCase().slice(0, 100)
+        : null;
 
     // Validate email
     if (!email || !isValidEmail(email)) {
@@ -52,11 +55,19 @@ export async function POST(req: Request) {
     }
 
     // Check if email already exists
-    const { data: existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
       .from("waitlist")
-      .select("id, referral_code")
+      .select("referral_code")
       .eq("email", email)
       .maybeSingle();
+
+    if (existingError) {
+      console.error("Waitlist lookup error:", existingError);
+      return NextResponse.json(
+        { ok: false, error: "Unable to check waitlist signup" },
+        { status: 500 }
+      );
+    }
 
     if (existing) {
       return NextResponse.json({
@@ -64,6 +75,25 @@ export async function POST(req: Request) {
         message: "Already on waitlist",
         data: existing,
       });
+    }
+
+    let referralCode: string | null = null;
+    if (requestedReferralCode) {
+      const { data: referrer, error: referralLookupError } = await supabase
+        .from("waitlist")
+        .select("referral_code")
+        .eq("referral_code", requestedReferralCode)
+        .maybeSingle();
+
+      if (referralLookupError) {
+        console.error("Referral lookup error:", referralLookupError);
+        return NextResponse.json(
+          { ok: false, error: "Unable to process referral" },
+          { status: 500 }
+        );
+      }
+
+      referralCode = referrer?.referral_code ?? null;
     }
 
     // Generate unique referral code (retry max 3 times)
@@ -91,7 +121,7 @@ export async function POST(req: Request) {
         referral_code: code,
         referred_by: referralCode,
       })
-      .select()
+      .select("referral_code")
       .single();
 
     if (error) {
