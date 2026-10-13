@@ -1,5 +1,18 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Waitlist admin
+
+The `/admin` dashboard requires the following server-side environment variables:
+
+- `ADMIN_PASSWORD`
+- `ADMIN_SESSION_SECRET` — a random secret of at least 32 bytes
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_SUPABASE_URL`
+
+Keep `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, and `SUPABASE_SERVICE_ROLE_KEY` out of client-side variables and source control. Before using referral counts in production, review and manually apply `supabase/migrations/20261013_secure_increment_referrals.sql` through the approved database process. The dashboard expects the waitlist referral columns created by `supabase/migrations/20261006_waitlist_referral_schema.sql`; verify that migration is already applied.
+
+Run the focused security tests with `npm test`.
+
 ## Getting Started
 
 First, run the development server:
