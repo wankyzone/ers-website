@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server.js";
 import { createClient } from "@supabase/supabase-js";
+import { sendWaitlistConfirmation } from "../../../lib/email/send-waitlist-confirmation.ts";
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -151,6 +152,9 @@ export async function POST(req: Request) {
         console.error("Referral increment error:", rpcError);
       }
     }
+
+    // Email delivery must not turn a successful signup into a failure.
+    await sendWaitlistConfirmation(email);
 
     return NextResponse.json({
       ok: true,

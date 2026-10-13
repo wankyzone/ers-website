@@ -12,12 +12,14 @@ const originalEnvironment = {
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
   serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
   nodeEnv: process.env.NODE_ENV,
+  resendApiKey: process.env.RESEND_API_KEY,
 };
 
 process.env.ADMIN_SESSION_SECRET = "unit-test-only-session-secret-at-least-32-bytes";
 process.env.NEXT_PUBLIC_SUPABASE_URL = "https://unit-test.supabase.co";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "unit-test-only-service-role-key";
 process.env.NODE_ENV = "test";
+process.env.RESEND_API_KEY = "re_test_only_not_real";
 
 after(() => {
   for (const [key, value] of [
@@ -25,6 +27,7 @@ after(() => {
     ["NEXT_PUBLIC_SUPABASE_URL", originalEnvironment.supabaseUrl],
     ["SUPABASE_SERVICE_ROLE_KEY", originalEnvironment.serviceRoleKey],
     ["NODE_ENV", originalEnvironment.nodeEnv],
+    ["RESEND_API_KEY", originalEnvironment.resendApiKey],
   ]) {
     if (value === undefined) delete process.env[key];
     else process.env[key] = value;
@@ -69,7 +72,7 @@ test("sessions reject missing, malformed, tampered, and expired values", async (
   assert.ok(validSession);
   assert.equal(await verifyAdminSession(validSession), true);
 
-  const tampered = `${validSession.slice(0, -1)}x`;
+  const tampered = `${validSession.slice(0, -1)}${validSession.endsWith("x") ? "y" : "x"}`;
   assert.equal(await verifyAdminSession(tampered), false);
   const encoder = new TextEncoder();
   const payload = "v1.1.AAAAAAAAAAAAAAAAAAAAAA";
@@ -241,6 +244,9 @@ test("CSV endpoint rejects unauthorized requests without querying Supabase", asy
 
 test("signup only increments a validated referral after a successful insert", async (t) => {
   const calls = mockSupabaseFetch(t, ({ url, method }) => {
+    if (url.hostname === "api.resend.com" && url.pathname === "/emails") {
+      return Response.json({ id: "test-email-id" });
+    }
     if (url.pathname.endsWith("/rpc/increment_referrals")) {
       return new Response(null, { status: 204 });
     }
@@ -289,6 +295,97 @@ test("signup only increments a validated referral after a successful insert", as
   );
   assert.ok(rpc);
   assert.deepEqual(JSON.parse(rpc.body), { code_input: "FRIEND1" });
+
+  const emailCall = calls.find(
+    (call) => call.url.hostname === "api.resend.com" && call.url.pathname === "/emails"
+  );
+  assert.ok(emailCall, "a confirmation email should be sent for a new signup");
+
+  const emailPayload = JSON.parse(emailCall.body);
+  assert.equal(emailPayload.from, "ERS Team <waitlist@ers.wankysoftware.com>");
+  assert.equal(emailPayload.to, "new@example.com");
+  assert.equal(emailPayload.subject, "You're on the ERS waitlist");
+  assert.match(emailPayload.html, /You're on the ERS waitlist/);
+  assert.match(emailPayload.text, /WE DON'T WAIT\./);
+});
+
+test("duplicate waitlist signup does not send another confirmation email", async (t) => {
+  const calls = mockSupabaseFetch(t, ({ url }) => {
+    if (url.hostname === "api.resend.com") {
+      return Response.json({ id: "unexpected-email" });
+    }
+
+    if (url.searchParams.get("select") === "referral_code") {
+      return Response.json({ referral_code: "EXISTING" });
+    }
+
+    return Response.json({ message: "Unexpected test query" }, { status: 500 });
+  });
+
+  const response = await joinWaitlist(
+    new Request("https://ers.example/api/waitlist", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email: "existing@example.com" }),
+    })
+  );
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), {
+    ok: true,
+    message: "Already on waitlist",
+    data: { referral_code: "EXISTING" },
+  });
+  assert.equal(
+    calls.filter((call) => call.url.hostname === "api.resend.com").length,
+    0,
+    "duplicate signup must not send a confirmation email"
+  );
+});
+
+test("waitlist signup succeeds when Resend returns an email error", async (t) => {
+  const calls = mockSupabaseFetch(t, ({ url, method }) => {
+    if (url.hostname === "api.resend.com" && url.pathname === "/emails") {
+      return Response.json(
+        { message: "Simulated Resend failure" },
+        { status: 500 }
+      );
+    }
+
+    if (method === "POST" && url.pathname.endsWith("/waitlist")) {
+      return Response.json({ referral_code: "NEWCODE" });
+    }
+
+    if (url.searchParams.get("select") === "referral_code") {
+      return Response.json(null);
+    }
+
+    if (url.searchParams.get("select") === "id") {
+      return Response.json(null);
+    }
+
+    return Response.json({ message: "Unexpected test query" }, { status: 500 });
+  });
+
+  const response = await joinWaitlist(
+    new Request("https://ers.example/api/waitlist", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email: "new@example.com" }),
+    })
+  );
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), {
+    ok: true,
+    data: { referral_code: "NEWCODE" },
+  });
+  assert.ok(
+    calls.some(
+      (call) => call.url.hostname === "api.resend.com" && call.url.pathname === "/emails"
+    ),
+    "the confirmation email should have been attempted"
+  );
 });
 
 test("referral migration removes public execution and grants only the server role", async () => {
