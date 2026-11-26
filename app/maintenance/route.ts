@@ -131,7 +131,7 @@ const maintenanceHtml = String.raw`<!doctype html>
 </body>
 </html>`;
 
-export function GET() {
+function maintenanceResponse() {
   return new Response(maintenanceHtml, {
     status: 503,
     headers: {
@@ -141,3 +141,15 @@ export function GET() {
     },
   });
 }
+
+export function GET() {
+  return maintenanceResponse();
+}
+
+// Ensure non-GET public requests also receive a clear temporary-unavailable
+// response instead of a method-not-allowed page after the maintenance rewrite.
+export const HEAD = GET;
+export const POST = GET;
+export const PUT = GET;
+export const PATCH = GET;
+export const DELETE = GET;
