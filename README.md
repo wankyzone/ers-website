@@ -47,3 +47,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+## Public website maintenance mode
+
+The public website can be placed into a temporary maintenance state without
+disabling the admin dashboard or API routes.
+
+1. In the Vercel **Production** environment, set
+   `ERS_MAINTENANCE_MODE=true`.
+2. Redeploy the production deployment so the new environment value is active.
+3. Verify that public routes return HTTP `503 Service Unavailable`, while
+   `/admin` and `/api/*` remain available.
+4. When the website is ready to reopen, set `ERS_MAINTENANCE_MODE=false`
+   (or remove the variable) and redeploy.
+
+The maintenance response is intentionally not cached and sends
+`X-Robots-Tag: noindex, nofollow`. The robots route also temporarily disallows
+crawling while maintenance mode is enabled. The maintenance endpoint at
+`/maintenance` is available for health checks and returns HTTP 503 directly.
+
+Do not disable or rotate Supabase, admin-authentication, or API credentials as
+part of this website-only maintenance procedure.
